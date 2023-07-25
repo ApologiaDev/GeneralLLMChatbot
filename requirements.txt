@@ -1,0 +1,11 @@
+numpy
+langchain
+huggingface_hub
+sentence_transformers
+python-dotenv
+pypdf
+faiss-cpu
+gpt_index
+PyCryptodome
+openpyxl
+tqdm

@@ -1,0 +1,10 @@
+{
+  "llm": {
+    "hub": "huggingface",
+    "model": "google/flan-tg-xxl"
+  },
+  "embedding": {
+    "hub": "huggingface",
+    "model": "sentence-transformers/all-MiniLM-L6-v2"
+  }
+}
