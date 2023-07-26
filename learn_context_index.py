@@ -2,12 +2,16 @@
 import os
 import json
 from argparse import ArgumentParser
+from glob import glob
 
 from dotenv import load_dotenv
 from langchain import HuggingFaceHub
 from langchain.chat_models import ChatOpenAI
 from langchain.embeddings import HuggingFaceEmbeddings
 from langchain.embeddings.openai import OpenAIEmbeddings
+from langchain.document_loaders import PyPDFLoader
+from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain.vectorstores import FAISS
 
 
 # load environment variables from .env, tokens
@@ -51,6 +55,29 @@ def get_embedding_model(config):
         return HuggingFaceEmbeddings(model_name=model, model_kwargs=model_kwargs)
 
 
+text_splitter = RecursiveCharacterTextSplitter(
+    # Set a really small chunk size, just to show.
+    chunk_size=900,
+    chunk_overlap=20,
+    length_function=len
+)
+
+
+def get_pages_from_pdf_document(pdffilepath):
+    loader = PyPDFLoader(pdffilepath)
+    pages = loader.load_and_split(text_splitter=text_splitter)
+    return pages
+
+
+def get_pages_from_pdf_documents(directory):
+    pages = []
+    for pdffilepath in glob(os.path.join(directory, '*.pdf')):
+        this_pages = get_pages_from_pdf_document(pdffilepath)
+        if this_pages is not None and len(this_pages) > 0:
+            pages.append(this_pages)
+    return pages
+
+
 if __name__ == '__main__':
     args = get_argparser().parse_args()
     config = json.load(open(args.learnconfigpath, 'r'))
@@ -59,3 +86,9 @@ if __name__ == '__main__':
 
     llm = get_llm_model(config)
     embedding = get_embedding_model(config)
+
+    pages = get_pages_from_pdf_documents(args.corpusdir)
+
+    db = FAISS.from_documents(pages, embedding)
+
+    db.save_local(args.outputdir)
