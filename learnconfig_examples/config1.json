@@ -1,7 +1,7 @@
 {
   "llm": {
     "hub": "huggingface",
-    "model": "google/flan-tg-xxl"
+    "model": "google/flan-t5-xxl"
   },
   "embedding": {
     "hub": "huggingface",

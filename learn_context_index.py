@@ -4,6 +4,7 @@ import json
 from argparse import ArgumentParser
 from glob import glob
 
+from tqdm import tqdm
 from dotenv import load_dotenv
 from langchain import HuggingFaceHub
 from langchain.chat_models import ChatOpenAI
@@ -16,7 +17,7 @@ from langchain.vectorstores import FAISS
 
 # load environment variables from .env, tokens
 load_dotenv()
-os.environ['OPENAI_API_KEY'] = os.getenv('OPENAIKEY')
+os.environ['OPENAI_API_KEY'] = os.getenv('OPENAI_API_KEY')
 os.environ['HUGGINGFACEHUB_API_TOKEN'] = os.getenv('HUGGINGFACEHUB_API_TOKEN')
 
 
@@ -39,7 +40,10 @@ def get_llm_model(config):
     elif hub == 'huggingface':
         model = llm_config.get('model', 'google/flan-t5-xxl')
         model_kwargs = llm_config.get('model_kwargs')  # example: {'temperature': temperature, 'max_length': max_tokens}
-        return HuggingFaceHub(repo_id=model, model_kwargs=model_kwargs)
+        if model_kwargs is None:
+            return HuggingFaceHub(repo_id=model)
+        else:
+            return HuggingFaceHub(repo_id=model, model_kwargs=model_kwargs)
     else:
         raise ValueError('Unknown LLM specified!')
 
@@ -52,11 +56,13 @@ def get_embedding_model(config):
     elif hub == 'huggingface':
         model = embedding_config.get('model', 'sentence-transformers/all-MiniLM-L6-v2')
         model_kwargs = embedding_config.get('model_kwargs')
-        return HuggingFaceEmbeddings(model_name=model, model_kwargs=model_kwargs)
+        if model_kwargs is None:
+            return HuggingFaceEmbeddings(model_name=model)
+        else:
+            return HuggingFaceEmbeddings(model_name=model, model_kwargs=model_kwargs)
 
 
 text_splitter = RecursiveCharacterTextSplitter(
-    # Set a really small chunk size, just to show.
     chunk_size=900,
     chunk_overlap=20,
     length_function=len
@@ -71,10 +77,10 @@ def get_pages_from_pdf_document(pdffilepath):
 
 def get_pages_from_pdf_documents(directory):
     pages = []
-    for pdffilepath in glob(os.path.join(directory, '*.pdf')):
+    for pdffilepath in tqdm(glob(os.path.join(directory, '*.pdf'))):
         this_pages = get_pages_from_pdf_document(pdffilepath)
         if this_pages is not None and len(this_pages) > 0:
-            pages.append(this_pages)
+            pages += this_pages
     return pages
 
 
