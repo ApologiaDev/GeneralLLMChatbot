@@ -84,6 +84,12 @@ def get_pages_from_pdf_documents(directory):
     return pages
 
 
+def iterate_list_pdfnames(directory):
+    for pdffilepath in tqdm(glob(os.path.join(directory, '*.pdf'))):
+        basename = os.path.basename(pdffilepath)
+        yield basename
+
+
 def generate_model_and_faissdb(corpusdir, config):
     llm = get_llm_model(config)
     embedding = get_embedding_model(config)
@@ -101,3 +107,7 @@ if __name__ == '__main__':
         raise FileNotFoundError('Output directory {} does not exist.'.format(args.outputdir))
     _, _, db = generate_model_and_faissdb(args.corpusdir, config)
     db.save_local(args.outputdir)
+    json.dump(config, open(os.path.join(args.outputdir, 'config.json'), 'w'))
+    with open(os.path.join(args.outputdir, 'booklist.txt'), 'w') as f:
+        for bookname in iterate_list_pdfnames(args.corpusdir):
+            f.write(bookname+'\n')
