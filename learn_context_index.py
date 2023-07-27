@@ -84,17 +84,20 @@ def get_pages_from_pdf_documents(directory):
     return pages
 
 
+def generate_model_and_faissdb(corpusdir, config):
+    llm = get_llm_model(config)
+    embedding = get_embedding_model(config)
+
+    pages = get_pages_from_pdf_documents(corpusdir)
+    db = FAISS.from_documents(pages, embedding)
+
+    return llm, embedding, db
+
+
 if __name__ == '__main__':
     args = get_argparser().parse_args()
     config = json.load(open(args.learnconfigpath, 'r'))
     if not os.path.isdir(args.outputdir):
         raise FileNotFoundError('Output directory {} does not exist.'.format(args.outputdir))
-
-    llm = get_llm_model(config)
-    embedding = get_embedding_model(config)
-
-    pages = get_pages_from_pdf_documents(args.corpusdir)
-
-    db = FAISS.from_documents(pages, embedding)
-
+    _, _, db = generate_model_and_faissdb(args.corpusdir, config)
     db.save_local(args.outputdir)
