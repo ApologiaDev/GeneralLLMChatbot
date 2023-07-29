@@ -1,0 +1,9 @@
+{
+  "llm": {
+    "hub": "openai",
+    "model": "gpt-4"
+  },
+  "embedding": {
+    "hub": null
+  }
+}
