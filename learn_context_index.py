@@ -3,6 +3,7 @@ import os
 import json
 from argparse import ArgumentParser
 from glob import glob
+from time import time
 
 from tqdm import tqdm
 from dotenv import load_dotenv
@@ -63,9 +64,24 @@ if __name__ == '__main__':
     config = json.load(open(args.learnconfigpath, 'r'))
     if not os.path.isdir(args.outputdir):
         raise FileNotFoundError('Output directory {} does not exist.'.format(args.outputdir))
+
+    starttime = time()
+    print('Generating FAISS...')
     _, _, db = generate_model_and_faissdb(args.corpusdir, config)
+    indextime = time()
+    print('Finished. (Duration: {:.2f} s)'.format(indextime-starttime))
+    print("=======")
+    print('Saving FAISS...')
     db.save_local(args.outputdir)
+    savetime = time()
+    print('Saved. (Duration: {:.2f} s)'.format(savetime-indextime))
+    print("=======")
+    print('Saving other configurations...')
     json.dump(config, open(os.path.join(args.outputdir, 'config.json'), 'w'))
     with open(os.path.join(args.outputdir, 'booklist.txt'), 'w') as f:
         for bookname in iterate_list_pdfnames(args.corpusdir):
             f.write(bookname+'\n')
+    endtime = time()
+    print('Saved. (Duration: {:.2f} s)'.format(endtime-savetime))
+
+    print('Total duration: {:.2f} s'.format(endtime-starttime))
