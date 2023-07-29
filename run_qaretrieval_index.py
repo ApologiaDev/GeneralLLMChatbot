@@ -2,16 +2,8 @@
 import os
 import json
 from argparse import ArgumentParser
-from glob import glob
 
-from tqdm import tqdm
 from dotenv import load_dotenv
-from langchain import HuggingFaceHub
-from langchain.chat_models import ChatOpenAI
-from langchain.embeddings import HuggingFaceEmbeddings
-from langchain.embeddings.openai import OpenAIEmbeddings
-from langchain.document_loaders import PyPDFLoader
-from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.vectorstores import FAISS
 from langchain.chains import RetrievalQA
 
@@ -33,7 +25,6 @@ def get_argparser():
 def load_faiss(contextdir, embedding):
     db = FAISS.load_local(contextdir, embedding)
     return db
-
 
 
 if __name__ == '__main__':
