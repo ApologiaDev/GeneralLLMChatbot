@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 from langchain.vectorstores import FAISS
 from langchain.chains import RetrievalQA
 
-from util.modelhelpers import get_llm_model, get_embedding_model, text_splitter
+from util.modelhelpers import get_llm_model, get_embedding_model
 
 
 # load environment variables from .env, tokens
