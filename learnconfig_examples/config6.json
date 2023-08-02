@@ -1,0 +1,10 @@
+{
+  "llm": {
+    "hub": "huggingface",
+    "model": "gpt2-large"
+  },
+  "embedding": {
+    "hub": "huggingface",
+    "model": "gpt2-large"
+  }
+}
