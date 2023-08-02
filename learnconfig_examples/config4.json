@@ -1,0 +1,10 @@
+{
+  "llm": {
+    "hub": "huggingface",
+    "model": "databricks/dolly-v2-3b"
+  },
+  "embedding": {
+    "hub": "huggingface",
+    "model": "sentence-transformers/allenai-specter"
+  }
+}
