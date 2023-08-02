@@ -23,7 +23,7 @@ def get_llm_model(config):
         raise ValueError('Unknown LLM specified!')
 
 
-def get_embedding_model(config):
+def get_embeddings_model(config):
     embedding_config = config['embedding']
     hub = embedding_config.get('hub')
     if (hub is None) or (hub == 'openai'):
@@ -31,10 +31,10 @@ def get_embedding_model(config):
     elif hub == 'huggingface':
         model = embedding_config.get('model', 'sentence-transformers/all-MiniLM-L6-v2')
         model_kwargs = embedding_config.get('model_kwargs')
-        if model_kwargs is None:
-            return HuggingFaceEmbeddings(model_name=model)
-        else:
-            return HuggingFaceEmbeddings(model_name=model, model_kwargs=model_kwargs)
+        embeddings_model = HuggingFaceEmbeddings(model_name=model) if model_kwargs is None else HuggingFaceEmbeddings(model_name=model, model_kwargs=model_kwargs)
+        if embeddings_model.client.tokenizer.pad_token is None:
+            embeddings_model.client.tokenizer.pad_token = embeddings_model.client.tokenizer.eos_token
+        return embeddings_model
 
 
 text_splitter = RecursiveCharacterTextSplitter(
