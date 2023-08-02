@@ -26,7 +26,7 @@ def get_llm_model(config):
 def get_embedding_model(config):
     embedding_config = config['embedding']
     hub = embedding_config.get('hub')
-    if hub is None:
+    if (hub is None) or (hub == 'openai'):
         return OpenAIEmbeddings()
     elif hub == 'huggingface':
         model = embedding_config.get('model', 'sentence-transformers/all-MiniLM-L6-v2')
