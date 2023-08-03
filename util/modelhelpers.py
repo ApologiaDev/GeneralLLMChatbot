@@ -1,6 +1,8 @@
+
 from langchain import HuggingFaceHub
 from langchain.chat_models import ChatOpenAI
 from langchain.embeddings import OpenAIEmbeddings, HuggingFaceEmbeddings
+from langchain.embeddings.fake import FakeEmbeddings
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 
 
@@ -26,7 +28,7 @@ def get_llm_model(config):
 def get_embeddings_model(config):
     embedding_config = config.get('embedding')
     if embedding_config is None:
-        return None
+        return FakeEmbeddings(size=768)
     hub = embedding_config.get('hub')
     if (hub is None) or (hub == 'openai'):
         return OpenAIEmbeddings()
