@@ -24,7 +24,9 @@ def get_llm_model(config):
 
 
 def get_embeddings_model(config):
-    embedding_config = config['embedding']
+    embedding_config = config.get('embedding')
+    if embedding_config is None:
+        return None
     hub = embedding_config.get('hub')
     if (hub is None) or (hub == 'openai'):
         return OpenAIEmbeddings()
