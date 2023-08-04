@@ -1,6 +1,8 @@
+
 from langchain import HuggingFaceHub
 from langchain.chat_models import ChatOpenAI
 from langchain.embeddings import OpenAIEmbeddings, HuggingFaceEmbeddings
+from langchain.embeddings.fake import FakeEmbeddings
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 
 
@@ -23,18 +25,20 @@ def get_llm_model(config):
         raise ValueError('Unknown LLM specified!')
 
 
-def get_embedding_model(config):
-    embedding_config = config['embedding']
+def get_embeddings_model(config):
+    embedding_config = config.get('embedding')
+    if embedding_config is None:
+        return FakeEmbeddings(size=768)
     hub = embedding_config.get('hub')
-    if hub is None:
+    if (hub is None) or (hub == 'openai'):
         return OpenAIEmbeddings()
     elif hub == 'huggingface':
         model = embedding_config.get('model', 'sentence-transformers/all-MiniLM-L6-v2')
         model_kwargs = embedding_config.get('model_kwargs')
-        if model_kwargs is None:
-            return HuggingFaceEmbeddings(model_name=model)
-        else:
-            return HuggingFaceEmbeddings(model_name=model, model_kwargs=model_kwargs)
+        embeddings_model = HuggingFaceEmbeddings(model_name=model) if model_kwargs is None else HuggingFaceEmbeddings(model_name=model, model_kwargs=model_kwargs)
+        if embeddings_model.client.tokenizer.pad_token is None:
+            embeddings_model.client.tokenizer.pad_token = embeddings_model.client.tokenizer.eos_token
+        return embeddings_model
 
 
 text_splitter = RecursiveCharacterTextSplitter(

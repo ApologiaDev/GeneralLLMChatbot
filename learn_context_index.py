@@ -10,7 +10,7 @@ from dotenv import load_dotenv
 from langchain.document_loaders import PyPDFLoader
 from langchain.vectorstores import FAISS
 
-from util.modelhelpers import get_llm_model, get_embedding_model, text_splitter
+from util.modelhelpers import get_llm_model, get_embeddings_model, text_splitter
 
 
 # load environment variables from .env, tokens
@@ -50,7 +50,7 @@ def iterate_list_pdfnames(directory):
 
 def generate_model_and_faissdb(corpusdir, config):
     llm = get_llm_model(config)
-    embedding = get_embedding_model(config)
+    embedding = get_embeddings_model(config)
 
     pages = get_pages_from_pdf_documents(corpusdir)
     db = FAISS.from_documents(pages, embedding)

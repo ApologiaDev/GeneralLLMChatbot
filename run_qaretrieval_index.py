@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 from langchain.vectorstores import FAISS
 from langchain.chains import RetrievalQA
 
-from util.modelhelpers import get_llm_model, get_embedding_model
+from util.modelhelpers import get_llm_model, get_embeddings_model
 
 
 # load environment variables from .env, tokens
@@ -33,7 +33,7 @@ if __name__ == '__main__':
         raise FileNotFoundError('Directory {} not found.'.format(args.contextdir))
     config = json.load(open(os.path.join(args.contextdir, 'config.json')))
     llm = get_llm_model(config)
-    embedding = get_embedding_model(config)
+    embedding = get_embeddings_model(config)
     db = load_faiss(args.contextdir, embedding)
     retriever = db.as_retriever()
     qa = RetrievalQA.from_chain_type(
