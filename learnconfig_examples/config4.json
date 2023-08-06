@@ -5,6 +5,6 @@
   },
   "embedding": {
     "hub": "huggingface",
-    "model": "sentence-transformers/allenai-specter"
+    "model": "databricks/dolly-v2-3b"
   }
 }
