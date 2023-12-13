@@ -4,6 +4,10 @@ from langchain.chat_models import ChatOpenAI
 from langchain.embeddings import OpenAIEmbeddings, HuggingFaceEmbeddings
 from langchain.embeddings.fake import FakeEmbeddings
 from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain.llms import LlamaCpp
+from langchain.callbacks.manager import CallbackManager
+from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
+from langchain.embeddings import GPT4AllEmbeddings
 
 
 def get_llm_model(config):
@@ -21,6 +25,18 @@ def get_llm_model(config):
             return HuggingFaceHub(repo_id=model)
         else:
             return HuggingFaceHub(repo_id=model, model_kwargs=model_kwargs)
+    elif hub == 'llamacpp':
+        model_kwargs = llm_config.get('model_kwargs')
+        callback_manager = CallbackManager([StreamingStdOutCallbackHandler()])
+        return LlamaCpp(
+            model_path=llm_config['modelpath'],
+            n_gpu_layers=model_kwargs.get('n_gpu_layers', 1),
+            n_batch=model_kwargs.get('n_batch', 512),
+            n_ctx=2048,
+            f16_kv=True,
+            callback_manager=callback_manager,
+            verbose=True
+        )
     else:
         raise ValueError('Unknown LLM specified!')
 
@@ -39,6 +55,8 @@ def get_embeddings_model(config):
         if embeddings_model.client.tokenizer.pad_token is None:
             embeddings_model.client.tokenizer.pad_token = embeddings_model.client.tokenizer.eos_token
         return embeddings_model
+    elif hub == 'gpt4all':
+        return GPT4AllEmbeddings()
 
 
 text_splitter = RecursiveCharacterTextSplitter(
