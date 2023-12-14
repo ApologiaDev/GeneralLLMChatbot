@@ -1,0 +1,15 @@
+{
+  "llm": {
+    "hub": "ctransformers",
+    "model": "TheBloke/Llama-2-7b-Chat-GGUF",
+    "model_file": "llama-2-7b-chat.Q2_K.gguf",
+    "model_kwargs": {
+      "max_new_tokens": 512,
+      "temperature": 0.5,
+      "gpu_layers": 50
+    }
+  },
+  "embedding": {
+    "hub": "gpt4all"
+  }
+}

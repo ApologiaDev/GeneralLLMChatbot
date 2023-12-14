@@ -1,7 +1,11 @@
 {
   "llm": {
     "hub": "llamacpp",
-    "modelpath": "llama-2-7b-chat.Q2_K.gguf"
+    "modelpath": "llama-2-7b-chat.Q2_K.gguf",
+    "model_kwargs": {
+      "n_gpu_layers": 1,
+      "n_batch": 512
+    }
   },
   "embedding": {
     "hub": "gpt4all"
