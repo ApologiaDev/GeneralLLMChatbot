@@ -49,14 +49,13 @@ def iterate_list_pdfnames(directory):
 
 
 def generate_model_and_faissdb(corpusdir, config):
-    llm = get_llm_model(config)
     embedding = get_embeddings_model(config)
 
     pages = get_pages_from_pdf_documents(corpusdir)
     db = FAISS.from_documents(pages, embedding)
 
 
-    return llm, embedding, db
+    return embedding, db
 
 
 if __name__ == '__main__':
@@ -67,7 +66,7 @@ if __name__ == '__main__':
 
     starttime = time()
     print('Generating FAISS...')
-    _, _, db = generate_model_and_faissdb(args.corpusdir, config)
+    _, db = generate_model_and_faissdb(args.corpusdir, config)
     indextime = time()
     print('Finished. (Duration: {:.2f} s)'.format(indextime-starttime))
     print("=======")
