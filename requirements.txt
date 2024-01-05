@@ -9,3 +9,5 @@ gpt_index
 PyCryptodome
 openpyxl
 tqdm
+llama-cpp-python
+gpt4all
