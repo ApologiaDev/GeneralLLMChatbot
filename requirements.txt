@@ -1,5 +1,6 @@
 numpy
 langchain
+langchain-community
 huggingface_hub
 sentence_transformers
 python-dotenv
@@ -9,5 +10,4 @@ gpt_index
 PyCryptodome
 openpyxl
 tqdm
-llama-cpp-python
 gpt4all

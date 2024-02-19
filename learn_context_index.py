@@ -10,13 +10,11 @@ from dotenv import load_dotenv
 from langchain.document_loaders import PyPDFLoader
 from langchain.vectorstores import FAISS
 
-from util.modelhelpers import get_llm_model, get_embeddings_model, text_splitter
+from util.modelhelpers import get_embeddings_model, text_splitter
 
 
 # load environment variables from .env, tokens
 load_dotenv()
-os.environ['OPENAI_API_KEY'] = os.getenv('OPENAI_API_KEY')
-os.environ['HUGGINGFACEHUB_API_TOKEN'] = os.getenv('HUGGINGFACEHUB_API_TOKEN')
 
 
 def get_argparser():
