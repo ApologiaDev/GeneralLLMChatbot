@@ -1,4 +1,5 @@
 
+import boto3
 from langchain import HuggingFaceHub
 from langchain.chat_models import ChatOpenAI
 from langchain.embeddings import OpenAIEmbeddings, HuggingFaceEmbeddings
@@ -6,6 +7,7 @@ from langchain.embeddings.fake import FakeEmbeddings
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.llms import CTransformers
 from langchain.embeddings import GPT4AllEmbeddings
+from langchain_aws.llms.bedrock import Bedrock
 
 
 def get_llm_model(config):
@@ -49,6 +51,13 @@ def get_embeddings_model(config):
         return embeddings_model
     elif hub == 'gpt4all':
         return GPT4AllEmbeddings()
+
+
+get_bedrock_runtime = lambda region_name: boto3.client(service_name='bedrock-runtime', region_name=region_name)
+
+
+def get_langchain_bedrock_llm(model_id, client, *args, **kwargs):
+    return Bedrock(model_id=model_id, client=client, *args, **kwargs)
 
 
 text_splitter = RecursiveCharacterTextSplitter(

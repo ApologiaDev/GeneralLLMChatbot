@@ -1,6 +1,7 @@
 numpy
-langchain
+langchain>=0.0.350
 langchain-community
+langchain_aws
 huggingface_hub
 sentence_transformers
 python-dotenv
