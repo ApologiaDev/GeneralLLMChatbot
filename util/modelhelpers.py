@@ -1,9 +1,13 @@
 
+import boto3
 from langchain import HuggingFaceHub
 from langchain.chat_models import ChatOpenAI
 from langchain.embeddings import OpenAIEmbeddings, HuggingFaceEmbeddings
 from langchain.embeddings.fake import FakeEmbeddings
 from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain_community.llms import CTransformers
+from langchain_community.embeddings.gpt4all import GPT4AllEmbeddings
+from langchain_aws.llms.bedrock import Bedrock
 
 
 def get_llm_model(config):
@@ -21,6 +25,12 @@ def get_llm_model(config):
             return HuggingFaceHub(repo_id=model)
         else:
             return HuggingFaceHub(repo_id=model, model_kwargs=model_kwargs)
+    elif hub == 'ctransformers':
+        model = llm_config.get('model', 'TheBloke/Llama-2-7b-Chat-GGUF')
+        model_file = llm_config.get('model_file', 'llama-2-7b-chat.Q2_K.gguf')
+        model_type = llm_config.get('type', 'llama')
+        model_config = llm_config.get('model_kwargs')  # example: {'max_new_tokens': 512, 'temperature': 0.5, 'gpu_layers':50}
+        return CTransformers(model=model, model_file=model_file, type=model_type, config=model_config)
     else:
         raise ValueError('Unknown LLM specified!')
 
@@ -39,6 +49,15 @@ def get_embeddings_model(config):
         if embeddings_model.client.tokenizer.pad_token is None:
             embeddings_model.client.tokenizer.pad_token = embeddings_model.client.tokenizer.eos_token
         return embeddings_model
+    elif hub == 'gpt4all':
+        return GPT4AllEmbeddings()
+
+
+get_bedrock_runtime = lambda region_name: boto3.client(service_name='bedrock-runtime', region_name=region_name)
+
+
+def get_langchain_bedrock_llm(model_id, client, *args, **kwargs):
+    return Bedrock(model_id=model_id, client=client, *args, **kwargs)
 
 
 text_splitter = RecursiveCharacterTextSplitter(

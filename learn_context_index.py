@@ -10,13 +10,11 @@ from dotenv import load_dotenv
 from langchain.document_loaders import PyPDFLoader
 from langchain.vectorstores import FAISS
 
-from util.modelhelpers import get_llm_model, get_embeddings_model, text_splitter
+from util.modelhelpers import get_embeddings_model, text_splitter
 
 
 # load environment variables from .env, tokens
 load_dotenv()
-os.environ['OPENAI_API_KEY'] = os.getenv('OPENAI_API_KEY')
-os.environ['HUGGINGFACEHUB_API_TOKEN'] = os.getenv('HUGGINGFACEHUB_API_TOKEN')
 
 
 def get_argparser():
@@ -49,14 +47,13 @@ def iterate_list_pdfnames(directory):
 
 
 def generate_model_and_faissdb(corpusdir, config):
-    llm = get_llm_model(config)
     embedding = get_embeddings_model(config)
 
     pages = get_pages_from_pdf_documents(corpusdir)
     db = FAISS.from_documents(pages, embedding)
 
 
-    return llm, embedding, db
+    return embedding, db
 
 
 if __name__ == '__main__':
@@ -67,7 +64,7 @@ if __name__ == '__main__':
 
     starttime = time()
     print('Generating FAISS...')
-    _, _, db = generate_model_and_faissdb(args.corpusdir, config)
+    _, db = generate_model_and_faissdb(args.corpusdir, config)
     indextime = time()
     print('Finished. (Duration: {:.2f} s)'.format(indextime-starttime))
     print("=======")
