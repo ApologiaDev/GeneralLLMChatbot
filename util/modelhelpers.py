@@ -6,7 +6,7 @@ from langchain.embeddings import OpenAIEmbeddings, HuggingFaceEmbeddings
 from langchain.embeddings.fake import FakeEmbeddings
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.llms import CTransformers
-from langchain.embeddings import GPT4AllEmbeddings
+from langchain_community.embeddings.gpt4all import GPT4AllEmbeddings
 from langchain_aws.llms.bedrock import Bedrock
 
 
