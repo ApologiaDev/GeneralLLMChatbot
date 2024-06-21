@@ -4,7 +4,7 @@ import json
 from argparse import ArgumentParser
 
 from dotenv import load_dotenv
-from langchain.vectorstores import FAISS
+from langchain_community.vectorstores import FAISS
 from langchain.chains import RetrievalQA
 
 from util.modelhelpers import get_llm_model, get_embeddings_model
@@ -23,7 +23,7 @@ def get_argparser():
 
 
 def load_faiss(contextdir, embedding):
-    db = FAISS.load_local(contextdir, embedding)
+    db = FAISS.load_local(contextdir, embedding, allow_dangerous_serialization=True)
     return db
 
 

@@ -53,7 +53,8 @@ def get_embeddings_model(config):
         return GPT4AllEmbeddings()
 
 
-get_bedrock_runtime = lambda region_name: boto3.client(service_name='bedrock-runtime', region_name=region_name)
+def get_bedrock_runtime(region_name, *args, **kwargs):
+    return boto3.client(service_name='bedrock-runtime', region_name=region_name, *args, **kwargs)
 
 
 def get_langchain_bedrock_llm(model_id, client, *args, **kwargs):
